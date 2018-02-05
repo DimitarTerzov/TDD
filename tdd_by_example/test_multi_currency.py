@@ -1,3 +1,6 @@
+class Money(object):
+    pass
+
 
 class Dollar(object):
     def __init__(self, amount):
