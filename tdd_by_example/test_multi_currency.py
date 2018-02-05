@@ -2,7 +2,7 @@ class Money(object):
     pass
 
 
-class Dollar(object):
+class Dollar(Money):
     def __init__(self, amount):
         self.amount = amount
 
