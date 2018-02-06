@@ -1,33 +1,28 @@
 class Money(object):
-    pass
+    def __init__(self, amount):
+        self._amount = amount
+
+    def __eq__(self, other):
+        return self._amount == other._amount
+
+    def equals(self, other):
+        return self._amount == other._amount
 
 
 class Dollar(Money):
     def __init__(self, amount):
-        self.amount = amount
-
-    def __eq__(self, other):
-        return self.amount == other.amount
+        Money.__init__(self, amount)
 
     def times(self, multiplier):
-        return Dollar(self.amount * multiplier)
-
-    def equals(self, other):
-        return self.amount == other.amount
+        return Dollar(self._amount * multiplier)
 
 
-class Franc(object):
+class Franc(Money):
     def __init__(self, amount):
-        self.amount = amount
-
-    def __eq__(self, other):
-        return self.amount == other.amount
+        Money.__init__(self, amount)
 
     def times(self, multiplier):
-        return Franc(self.amount * multiplier)
-
-    def equals(self, other):
-        return self.amount == other.amount
+        return Franc(self._amount * multiplier)
 
 
 def test_multiplication():
@@ -39,6 +34,8 @@ def test_multiplication():
 def test_equality():
     assert Dollar(5).equals(Dollar(5))
     assert not Dollar(5).equals(Dollar(6))
+    assert Franc(5).equals(Franc(5))
+    assert not Franc(5).equals(Franc(6))
 
 
 def test_franc_multiplication():
