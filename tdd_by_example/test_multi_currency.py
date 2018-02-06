@@ -6,7 +6,8 @@ class Money(object):
         return self._amount == other._amount
 
     def equals(self, other):
-        return self._amount == other._amount
+        return (self._amount == other._amount and
+                self.__class__ == other.__class__)
 
 
 class Dollar(Money):
@@ -36,6 +37,7 @@ def test_equality():
     assert not Dollar(5).equals(Dollar(6))
     assert Franc(5).equals(Franc(5))
     assert not Franc(5).equals(Franc(6))
+    assert not Franc(5).equals(Dollar(5))
 
 
 def test_franc_multiplication():
