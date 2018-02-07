@@ -9,13 +9,24 @@ class Money(object):
         return (self._amount == other._amount and
                 self.__class__ == other.__class__)
 
+    @staticmethod
+    def dollar(amount):
+        return Dollar(amount)
+
+    @staticmethod
+    def franc(amount):
+        return Franc(amount)
+
+    def times(self, multiplier):
+        raise NotImplementedError
+
 
 class Dollar(Money):
     def __init__(self, amount):
         Money.__init__(self, amount)
 
     def times(self, multiplier):
-        return Dollar(self._amount * multiplier)
+        return Money(self._amount * multiplier)
 
 
 class Franc(Money):
@@ -23,24 +34,24 @@ class Franc(Money):
         Money.__init__(self, amount)
 
     def times(self, multiplier):
-        return Franc(self._amount * multiplier)
+        return Money(self._amount * multiplier)
 
 
 def test_multiplication():
-    five = Dollar(5)
-    assert Dollar(10) == five.times(2)
-    assert Dollar(15) == five.times(3)
+    five = Money.dollar(5)
+    assert Money.dollar(10) == five.times(2)
+    assert Money.dollar(15) == five.times(3)
 
 
 def test_equality():
-    assert Dollar(5).equals(Dollar(5))
-    assert not Dollar(5).equals(Dollar(6))
-    assert Franc(5).equals(Franc(5))
-    assert not Franc(5).equals(Franc(6))
-    assert not Franc(5).equals(Dollar(5))
+    assert Money.dollar(5).equals(Money.dollar(5))
+    assert not Money.dollar(5).equals(Money.dollar(6))
+    assert Money.franc(5).equals(Money.franc(5))
+    assert not Money.franc(5).equals(Money.franc(6))
+    assert not Money.franc(5).equals(Money.dollar(5))
 
 
 def test_franc_multiplication():
-    five = Franc(5)
-    assert Franc(10) == five.times(2)
-    assert Franc(15) == five.times(3)
+    five = Money.franc(5)
+    assert Money.franc(10) == five.times(2)
+    assert Money.franc(15) == five.times(3)
