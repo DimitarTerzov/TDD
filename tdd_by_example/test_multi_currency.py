@@ -1,6 +1,7 @@
 class Money(object):
-    def __init__(self, amount):
+    def __init__(self, amount, currency):
         self._amount = amount
+        self._currency = currency
 
     def __eq__(self, other):
         return self._amount == other._amount
@@ -11,30 +12,44 @@ class Money(object):
 
     @staticmethod
     def dollar(amount):
-        return Dollar(amount)
+        return Dollar(amount, "USD")
 
     @staticmethod
     def franc(amount):
-        return Franc(amount)
+        return Franc(amount, "CHF")
 
     def times(self, multiplier):
         raise NotImplementedError
 
+    def currency(self):
+        raise NotImplementedError
+
 
 class Dollar(Money):
-    def __init__(self, amount):
-        Money.__init__(self, amount)
+    def __init__(self, amount, currency):
+        Money.__init__(self, amount, currency)
 
     def times(self, multiplier):
         return Money(self._amount * multiplier)
+
+    def currency(self):
+        return self._currency
 
 
 class Franc(Money):
-    def __init__(self, amount):
-        Money.__init__(self, amount)
+    def __init__(self, amount, currency):
+        Money.__init__(self, amount, currency)
 
     def times(self, multiplier):
-        return Money(self._amount * multiplier)
+        return Money.franc(self._amount * multiplier)
+
+    def currency(self):
+        return self._currency
+
+
+def test_currency():
+    assert "USD" == Money.dollar(1).currency()
+    assert "CHF" == Money.franc(1).currency()
 
 
 def test_multiplication():
