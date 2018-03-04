@@ -1,10 +1,10 @@
 class Money(object):
     def __init__(self, amount, currency):
-        self._amount = amount
+        self.amount = amount
         self._currency = currency
 
     def __eq__(self, other):
-        return (self._amount == other._amount and
+        return (self.amount == other.amount and
                 self._currency == other._currency)
 
     equals = __eq__
@@ -18,18 +18,31 @@ class Money(object):
         return Money(amount, "CHF")
 
     def times(self, multiplier):
-        return Money(self._amount * multiplier, self._currency)
+        return Money(self.amount * multiplier, self._currency)
 
     def currency(self):
         return self._currency
 
     def plus(self, addend):
-        return Money(self._amount + addend._amount, self._currency)
+        return Sum(self, addend)
+
+    def reduce(self, to_currency):
+        return self
 
 
-class Bank():
-    def reduse(self, source, to_currency):
-        return Money.dollar(10)
+class Bank(object):
+    def reduce(self, source, to_currency):
+        return source.reduce(to_currency)
+
+
+class Sum(object):
+    def __init__(self, augend, addend):
+        self.augend = augend
+        self.addend = addend
+
+    def reduce(self, to_currency):
+        amount = self.augend.amount + self.addend.amount
+        return Money(amount, to_currency)
 
 
 def test_currency():
@@ -51,7 +64,27 @@ def test_equality():
 
 def test_simple_addition():
     five = Money.dollar(5)
-    sum_ = five.plus(five)
+    sum = five.plus(five)
     bank = Bank()
-    reduced = bank.reduse(sum_, "USD")
+    reduced = bank.reduce(sum, "USD")
     assert Money.dollar(10) == reduced
+
+
+def test_plus_returns_sum():
+    five = Money.dollar(5)
+    sum = five.plus(five)
+    assert five == sum.augend
+    assert five == sum.addend
+
+
+def test_reduce_sum():
+    sum = Sum(Money.dollar(3), Money.dollar(4))
+    bank = Bank()
+    result = bank.reduce(sum, "USD")
+    assert Money.dollar(7) == result
+
+
+def test_reduce_money():
+    bank = Bank()
+    result = bank.reduce(Money.dollar(1), "USD")
+    assert Money.dollar(1).equals(result)
