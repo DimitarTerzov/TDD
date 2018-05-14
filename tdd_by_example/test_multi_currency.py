@@ -51,7 +51,8 @@ class Sum(object):
         self.addend = addend
 
     def reduce(self, bank, to_currency):
-        amount = self.augend.amount + self.addend.amount
+        amount = self.augend.reduce(bank, to_currency).amount \
+            + self.addend.reduce(bank, to_currency).amount
         return Money(amount, to_currency)
 
 class Pair(object):
@@ -113,3 +114,11 @@ def test_reduce_money_different_currency():
 
 def test_identity_rate():
     assert Bank().rate("USD", "USD") == 1
+
+def test_mixed_addition():
+    five_bucks = Money.dollar(5)
+    ten_franks = Money.franc(10)
+    bank = Bank()
+    bank.add_rate("CHF", "USD", 2)
+    result = bank.reduce(five_bucks.plus(ten_franks), "USD")
+    assert Money.dollar(10) == result
